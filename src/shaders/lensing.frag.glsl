@@ -69,13 +69,14 @@ vec3 diskShade(vec3 p, float radius, vec3 rd) {
   base *= 0.55 + 0.9 * turb;
 
   // relativistic beaming: approaching disk material brightens & blue-shifts,
-  // receding material dims & red-shifts
+  // receding material dims & red-shifts (capped so it can't blow out bloom)
   vec3 tangent = normalize(vec3(-sin(angle), 0.0, cos(angle)));
   float doppler = dot(tangent, normalize(-rd));
-  float beam = pow(clamp(1.0 + doppler * 0.9, 0.05, 3.2), 2.2);
+  float beam = pow(clamp(1.0 + doppler * 0.9, 0.15, 2.0), 1.4);
   vec3 shifted = mix(base * vec3(1.0, 0.55, 0.4), base * vec3(0.55, 0.72, 1.0), clamp(doppler * 0.5 + 0.5, 0.0, 1.0));
 
-  return shifted * beam * uDiskBrightness;
+  vec3 outCol = shifted * beam * uDiskBrightness;
+  return min(outCol, vec3(5.0));
 }
 
 void main() {
@@ -89,7 +90,7 @@ void main() {
   vec3 accum = vec3(0.0);
   float accumA = 0.0;
 
-  const int STEPS = 140;
+  const int STEPS = 170;
   for (int i = 0; i < STEPS; i++) {
     if (accumA > 0.995) break;
 
@@ -108,7 +109,7 @@ void main() {
       break;
     }
 
-    float stepSize = clamp(r * 0.12, 0.015, 0.5);
+    float stepSize = clamp(r * 0.09, 0.008, 1.0);
 
     vec3 h = cross(pos, dir);
     vec3 accel = -1.5 * uRs * dot(h, h) * pos / pow(r2, 2.5);
@@ -134,5 +135,5 @@ void main() {
     }
   }
 
-  gl_FragColor = vec4(accum, 1.0);
+  gl_FragColor = vec4(min(accum, vec3(8.0)), 1.0);
 }

@@ -30,14 +30,14 @@ skyTexture.wrapT = THREE.ClampToEdgeWrapping;
 skyTexture.needsUpdate = true;
 
 const params = {
-  rs: 1.0,
+  rs: 1.25,
   diskInner: 2.6,
   diskOuter: 9.0,
   diskSpeed: 6.0,
-  diskBrightness: 1.6,
-  bloomStrength: 1.35,
-  bloomRadius: 0.55,
-  bloomThreshold: 0.15,
+  diskBrightness: 1.0,
+  bloomStrength: 0.75,
+  bloomRadius: 0.28,
+  bloomThreshold: 0.5,
   autoRotate: true,
 };
 
@@ -71,14 +71,14 @@ scene.add(quad);
 // A real perspective camera drives ray reconstruction inside the shader (position + orientation
 // are read every frame as uniforms). It is also passed to RenderPass to satisfy the API, but the
 // quad's own vertex shader ignores its view/projection matrices entirely.
-const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.set(9, 4.5, 14);
+const camera = new THREE.PerspectiveCamera(48, window.innerWidth / window.innerHeight, 0.1, 1000);
+camera.position.set(0, 7, 27);
 
 const controls = new OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.06;
-controls.minDistance = 3.5;
-controls.maxDistance = 60;
+controls.minDistance = 6;
+controls.maxDistance = 42;
 controls.autoRotate = params.autoRotate;
 controls.autoRotateSpeed = 0.4;
 
